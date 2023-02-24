@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
-import config from "../../config.json";
 
 type Response = {
   input: string;
@@ -23,7 +22,7 @@ export default async function handler(
     return;
   }
   const c = new Configuration({
-    apiKey: config.OPENAI_KEY,
+    apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(c);
   var submittedInputs = reqData.submittedInputs || [];
