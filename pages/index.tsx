@@ -78,7 +78,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Tom Riddle's Diary</title>
+        <title>Tom Riddle&apos;s Diary</title>
         <meta
           name="description"
           content="Talk with Tom Riddle from Harry Potter"
