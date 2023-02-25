@@ -5,23 +5,28 @@ import "animate.css";
 import FadeIn from "@/components/FadeIn";
 import FadeOut from "@/components/FadeOut";
 
-export const FADE_IN_TIME = 5000;
-export const FADE_OUT_TIME = 7500;
+export const FADE_IN_TIME = 2000;
+export const FADE_OUT_TIME = 3000;
 type InputResponse = {
   input: string;
   response: string;
 };
 
+const splitSentences = (text: string): string[] => {
+  return text.match(/[^\.!\?]+[\.!\?]+/g)!;
+};
+
 export default function Home() {
-  const [currentText, setCurrentText] = useState<string>(
-    "Hello, my name is Tom Riddle."
-  );
+  const [currentText, setCurrentText] = useState<string>("");
   const [showText, setShowText] = useState<boolean>(true);
   const [showInput, setShowInput] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>("Type something here...");
   const [submittedInputs, setSubmittedInputs] = useState<InputResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const inputDiv = useRef<HTMLInputElement>(null);
+  const [response, setResponse] = useState<string[]>([
+    "Hello, my name is Tom Riddle.",
+  ]);
   const submit = () => {
     setLoading(true);
     fetch("/api/ask-tom", {
@@ -32,7 +37,10 @@ export default function Home() {
       }),
     }).then((res) => {
       res.json().then((data) => {
-        setCurrentText(data.response);
+        var sentences = splitSentences(data.response);
+        const firstSentence = sentences.shift()!;
+        setCurrentText(firstSentence);
+        setResponse(sentences);
         setSubmittedInputs([
           ...submittedInputs,
           { input: data.input, response: data.response },
@@ -46,14 +54,30 @@ export default function Home() {
     });
     setInputText("go again?");
   };
+
   useEffect(() => {
+    console.log(response, currentText);
     setTimeout(() => {
       setShowText(false);
     }, FADE_IN_TIME);
-    setTimeout(() => {
-      setShowInput(true);
-    }, FADE_IN_TIME + FADE_OUT_TIME);
-  });
+    if (response.length === 0) {
+      setTimeout(() => {
+        setShowInput(true);
+      }, FADE_IN_TIME + FADE_OUT_TIME);
+    }
+  }, [currentText]);
+
+  useEffect(() => {
+    if (response.length > 0) {
+      setTimeout(() => {
+        const sentence = response[0];
+        setCurrentText(sentence);
+        setResponse(response.slice(1));
+        setShowText(true);
+      }, FADE_IN_TIME + FADE_OUT_TIME);
+    }
+  }, [response]);
+
   return (
     <>
       <Head>
