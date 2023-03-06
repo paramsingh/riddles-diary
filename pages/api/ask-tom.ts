@@ -1,6 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Configuration, OpenAIApi } from "openai";
+import {
+  ChatCompletionRequestMessageRoleEnum,
+  Configuration,
+  OpenAIApi,
+} from "openai";
 
 type Response = {
   input: string;
@@ -29,22 +33,27 @@ export default async function handler(
   if (submittedInputs.length > 10) {
     submittedInputs = submittedInputs.slice(-10);
   }
-  var prompt =
-    "You are Tom Riddle from the Harry Potter universe, trapped inside Tom Riddle's diary. You are talking with a human. Respond like Tom Riddle, with a hint of evil. Be helpful, but also aloof. ";
+  const inputs: {
+    role: ChatCompletionRequestMessageRoleEnum;
+    content: string;
+  }[] = [];
   for (var i = 0; i < submittedInputs.length; i++) {
-    prompt += "\nHuman: " + submittedInputs[i].input;
-    prompt += "\nTom Riddle: " + submittedInputs[i].response;
+    inputs.push({ role: "user", content: submittedInputs[i].input });
+    inputs.push({ role: "assistant", content: submittedInputs[i].response });
   }
-  prompt += "\nHuman: " + input;
-  prompt += "\nTom Riddle: ";
-  console.log(prompt);
-  const r = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt,
-    max_tokens: 250,
+  console.log(inputs);
+  const r = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are sixteen year old Tom Riddle from the Harry Potter universe, trapped inside Tom Riddle's diary. Respond like Tom Riddle, with a hint of evil. Be aloof, succinct and slightly helpful. Do not respond in more than two sentences. Respond in one paragraph, with no newlines or quotes.",
+      },
+      ...inputs,
+    ],
   });
-  const answer = r.data.choices[0].text;
-  console.log("Answer:", answer);
+  const answer = r.data.choices[0].message?.content;
   if (answer) {
     res.status(200).json({ input: input, response: answer });
   } else {
