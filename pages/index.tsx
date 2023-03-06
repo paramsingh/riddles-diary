@@ -100,7 +100,7 @@ export default function Home() {
             <h1
               style={{
                 fontFamily: "Italianno, cursive",
-                fontSize: "120px",
+                fontSize: "6vmin",
               }}
             >
               {currentText}
@@ -111,7 +111,7 @@ export default function Home() {
             <h1
               style={{
                 fontFamily: "Italianno, cursive",
-                fontSize: "120px",
+                fontSize: "6vmin",
               }}
             >
               {currentText}
@@ -121,21 +121,20 @@ export default function Home() {
         {showInput && !loading && (
           <>
             <FadeIn>
-              <input
-                type="text"
+              <textarea
                 style={{
                   outline: "0px solid transparent",
                   fontFamily: "Patrick Hand",
-                  fontSize: "100px",
+                  fontSize: "4vw",
                   width: "100%",
-                  height: "100%",
+                  height: "70vh",
                   flexBasis: "100%",
                   textAlign: "center",
                   border: "none",
                   background: "none",
+                  overflow: "visible",
                 }}
                 spellCheck={false}
-                ref={inputDiv}
                 onFocus={() => {
                   if (
                     inputText === "Type something here..." ||
@@ -156,7 +155,7 @@ export default function Home() {
                     submit();
                   }
                 }}
-              ></input>
+              ></textarea>
             </FadeIn>
 
             <button
@@ -170,7 +169,7 @@ export default function Home() {
                 background: "none",
                 borderStyle: "solid",
                 borderColor: "white",
-                fontSize: "30px",
+                fontSize: "1.25vw",
                 fontFamily: "Patrick Hand",
               }}
               onClick={(e) => {
